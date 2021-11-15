@@ -36,7 +36,7 @@ class Arguments():
     self.gradient_accumulation_steps = 1
     self.pad_to_max_length = True
     self.batch_size = 8 
-    self.output_dir = 'model_nov1'
+    self.output_dir = 'model_nov15'
     self.overwrite = True
     self.local_rank = -1
     self.no_cuda = False
@@ -134,7 +134,7 @@ def train_dataloader(train_dataset):
 set_seed(1)
 
 #Loading dataset  
-train_data = wikiDataset("data/wikismall.txt")
+train_data = wikiDataset("data/wiki1m_for_simcse.txt")
 train_dataloader = train_dataloader(train_data)
 
 
