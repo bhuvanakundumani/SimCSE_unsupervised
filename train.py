@@ -87,7 +87,7 @@ class wikiDataset(Dataset):
           self.data = data
         else:
           train_data,val_data = train_test_split(data,test_size=0.15,random_state=42,shuffle=False)
-        self.data = train_data if training else val_data
+          self.data = train_data if training else val_data
 
     def __len__(self):
       return len(self.data)
@@ -131,27 +131,12 @@ def train_dataloader(train_dataset):
   return train_dataloader
 
 
-def val_dataloader(val_dataset):
-  val_sampler = SequentialSampler(val_dataset)
-  model_collate_fn = functools.partial(
-    process_batch,
-    tokenizer=tokenizer,
-    max_len=args.max_seq_length
-    )
-  val_dataloader = DataLoader(val_dataset,
-                              batch_size=args.batch_size,
-                              sampler=val_sampler,
-                              collate_fn=model_collate_fn)
-  return val_dataloader
-
 set_seed(1)
 
 #Loading dataset  
-train_data = wikiDataset("data/wiki1m_for_simcse.txt")
-val_data = wikiDataset("data/wiki1m_for_simcse.txt", training=False)
+train_data = wikiDataset("data/wiki1m_for_simcse.txt", full=True)
 
 train_dataloader = train_dataloader(train_data)
-valid_dataloader = val_dataloader(val_data)
 
 num_train_optimization_steps = int(len(train_data) / args.batch_size / args.gradient_accumulation_steps) * args.num_train_epochs
 
