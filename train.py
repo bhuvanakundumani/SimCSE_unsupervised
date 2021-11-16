@@ -10,6 +10,7 @@ import numpy as np
 from tqdm import tqdm
 from torch.optim import AdamW
 from transformers import get_linear_schedule_with_warmup
+from sklearn.model_selection import train_test_split
 
 from torch.utils.data import Dataset, dataloader
 from transformers import AutoConfig, AutoTokenizer
@@ -75,26 +76,25 @@ tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
 
 class wikiDataset(Dataset):
 
-  def __init__(self,
-               csv_path,
-               training=True,
-               full=False):
-    dataset_df = pd.read_csv(csv_path,encoding="latin-1",names=["text"])
-    source_texts = dataset_df["text"].values
-    target_texts = dataset_df["text"].values
-    data = list(zip(source_texts,target_texts))
-    # if full:
-    #   self.data = data
-    # else:
-    #   train_data,test_data = train_test_split(data,test_size=0.2,random_state=42,shuffle=False)
-    #self.data = train_data if training else test_data
-    self.data = data
+    def __init__(self, csv_path, training=True, full=False):
+        # dataset_df = pd.read_csv(csv_path,encoding="latin-1",names=["text"])
+        dataset_df = pd.read_csv(csv_path,names=["text"])
+        dataset_df.dropna(inplace=True)
+        source_texts = dataset_df["text"].values
+        target_texts = dataset_df["text"].values
+        data = list(zip(source_texts,target_texts))
+        if full:
+          self.data = data
+        else:
+          train_data,val_data = train_test_split(data,test_size=0.15,random_state=42,shuffle=False)
+        self.data = train_data if training else val_data
 
-  def __len__(self):
-    return len(self.data)
-  
-  def __getitem__(self,idx):
-    return self.data[idx]
+    def __len__(self):
+      return len(self.data)
+      
+    def __getitem__(self,idx):
+      return self.data[idx]
+
 
 def process_batch(txt_list,tokenizer,max_len=args.max_seq_length):
   source_ls = [source for source,target in txt_list]
@@ -129,14 +129,29 @@ def train_dataloader(train_dataset):
                               sampler=train_sampler,
                               collate_fn=model_collate_fn)
   return train_dataloader
-  
+
+
+def val_dataloader(val_dataset):
+  val_sampler = SequentialSampler(val_dataset)
+  model_collate_fn = functools.partial(
+    process_batch,
+    tokenizer=tokenizer,
+    max_len=args.max_seq_length
+    )
+  val_dataloader = DataLoader(val_dataset,
+                              batch_size=args.batch_size,
+                              sampler=val_sampler,
+                              collate_fn=model_collate_fn)
+  return val_dataloader
 
 set_seed(1)
 
 #Loading dataset  
 train_data = wikiDataset("data/wiki1m_for_simcse.txt")
-train_dataloader = train_dataloader(train_data)
+val_data = wikiDataset("data/wiki1m_for_simcse.txt", training=False)
 
+train_dataloader = train_dataloader(train_data)
+valid_dataloader = val_dataloader(val_data)
 
 num_train_optimization_steps = int(len(train_data) / args.batch_size / args.gradient_accumulation_steps) * args.num_train_epochs
 
