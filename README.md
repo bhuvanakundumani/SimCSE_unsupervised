@@ -1,6 +1,7 @@
-SimCSE (implementation)[https://arxiv.org/abs/2104.08821] of unsupervised data in Pytorch.
 
-Training using unsupervised approach
+## Implementation of SimCSE for unsupervised approach in Pytorch	
+
+This repo has simple code for the implementation of (SimCSE)[https://arxiv.org/abs/2104.08821] for unsupervised approach in Pytorch.
 
 ### Setup environment 
 ``` 
@@ -9,17 +10,13 @@ source env/bin/activate
 pip install -r requirements.txt
 
 ```
-
 ### Data 
-For unsupervised SimCSE,  1 million sentences from English Wikipedia are sampled. You can run data/download_wiki.sh to download the dataset.
-
+For unsupervised SimCSE,  1 million sentences from English Wikipedia are sampled. You can run data/download_wiki.sh to download the dataset.Pleae ensure that data folder has wiki1m_for_simcse.txt file before procedding further.
 
 ``` 
 source data/download_wiki.sh 
 
 ```
-
-Make sure that data folder has wiki1m_for_simcse.txt file.
 
 ### Training:
 
