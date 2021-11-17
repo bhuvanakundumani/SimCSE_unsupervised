@@ -2,7 +2,7 @@ SimCSE (implementation)[https://arxiv.org/abs/2104.08821] of unsupervised data i
 
 Training using unsupervised approach
 
-### setup environment 
+### Setup environment 
 ``` 
 python3 -m virtualenv env
 source env/bin/activate
