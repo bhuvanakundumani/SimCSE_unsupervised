@@ -5,7 +5,10 @@ Training using unsupervised approach
 Data 
 For unsupervised SimCSE,  1 million sentences from English Wikipedia are sampled. You can run data/download_wiki.sh to download the dataset.
 
-``` source data/download_wiki.sh 
+
+``` 
+source data/download_wiki.sh 
+
 ```
 
 Make sure that data folder has wiki1m_for_simcse.txt file.
