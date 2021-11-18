@@ -36,8 +36,8 @@ class Arguments():
     self.num_train_epochs = 1
     self.gradient_accumulation_steps = 1
     self.pad_to_max_length = True
-    self.batch_size = 8 
-    self.output_dir = 'model_nov15'
+    self.batch_size = 32 
+    self.output_dir = 'model_outputs'
     self.overwrite = True
     self.local_rank = -1
     self.no_cuda = False
@@ -183,9 +183,7 @@ for epoch in range(args.num_train_epochs):
       optimizer.step()
       scheduler.step()  # Update learning rate schedule
       model.zero_grad()
-    optimizer.step()
     logger.info("Step Loss", loss.item())
-  
   logger.info("Epoch Loss",running_loss)
 model.save_pretrained(args.output_dir)
 tokenizer.save_pretrained(args.output_dir)
